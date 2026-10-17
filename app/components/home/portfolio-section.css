@@ -1,11 +1,22 @@
 @layer components {
   .work-section {
+    --work-resting-saturation: 0.6;
     isolation: isolate;
     overflow: clip;
   }
 
   .work-frame {
     container-type: inline-size;
+  }
+
+  .work-artwork,
+  .work-thumbnail {
+    filter: saturate(var(--work-resting-saturation));
+    transition: filter 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .work-thumbnail-button:focus-visible .work-thumbnail {
+    filter: saturate(1);
   }
 
   .work-stage {
@@ -48,7 +59,7 @@
     overflow: clip;
     border-radius: 10px;
     background: var(--project-accent);
-    pointer-events: none;
+    pointer-events: auto;
   }
 
   .work-aura {
@@ -622,6 +633,13 @@
     }
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    .work-stage:hover .work-artwork,
+    .work-thumbnail-button:hover .work-thumbnail {
+      filter: saturate(1);
+    }
+  }
+
   @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .work-stage:hover
       .work-artwork-layer[data-state="active"]
@@ -653,6 +671,8 @@
     }
 
     .work-aura,
+    .work-artwork,
+    .work-thumbnail,
     .work-background-image,
     .work-case-link svg,
     .work-all-link svg,

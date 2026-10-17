@@ -4,6 +4,7 @@ import { site } from "./lib/site";
 import { Header } from "./components/header";
 import { Capabilities } from "./components/capabilities";
 import { HeroSection } from "./components/home/hero-section";
+import { ClientRibbon } from "./components/home/client-ribbon";
 import { PortfolioSection } from "./components/home/portfolio-section";
 import { StudioSection } from "./components/home/studio-section";
 import { JournalSection } from "./components/home/journal-section";
@@ -29,6 +30,7 @@ export default function Home() {
       <Header />
       <main id="main" tabIndex={-1}>
         <HeroSection />
+        <ClientRibbon />
         <Capabilities />
         <PortfolioSection />
         <StudioSection />

@@ -1,6 +1,42 @@
 @import "tailwindcss";
 
 @layer components {
+  .client-ribbon-track {
+    animation: client-ribbon-drift 100s linear infinite;
+  }
+  .client-ribbon:is(:hover, :focus-within) .client-ribbon-track {
+    animation-play-state: paused;
+  }
+  @keyframes client-ribbon-drift {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .client-ribbon-track {
+      width: 100%;
+      animation: none;
+    }
+    .client-ribbon-group {
+      display: grid;
+      width: 100%;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .client-ribbon-group > li {
+      width: auto;
+    }
+    .client-ribbon-group[aria-hidden="true"] {
+      display: none;
+    }
+    .client-ribbon-window {
+      mask-image: none;
+    }
+    @media (width >= 701px) {
+      .client-ribbon-group {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+  }
   .direction-arrow {
     display: inline-flex;
     vertical-align: middle;
