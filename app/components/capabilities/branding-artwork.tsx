@@ -1,13 +1,13 @@
 function IdentityMarks() {
-  // Column proportions follow the visible logo order to balance their heights.
+  // Columns balance aspect ratios; individual adjustments balance visual weight.
   return (
     <div
-      className="grid w-full grid-cols-[1.01fr_1.22fr_0.66fr_0.88fr_0.84fr] items-end justify-items-center gap-4 text-[rgb(48,55,43)] opacity-[0.07] transition-opacity duration-1200 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/branding:opacity-[0.08] group-hover/branding:opacity-[0.08] motion-reduce:transition-none min-[701px]:gap-[4%] [&>svg]:h-32 [&>svg]:w-[90%] [&>svg]:min-w-0 [&>svg]:transition-[translate] [&>svg]:duration-1200 [&>svg]:ease-in-out motion-reduce:[&>svg]:transition-none min-[701px]:[&>svg]:h-36 min-[1001px]:[&>svg]:h-40"
+      className="grid w-full grid-cols-[1.01fr_1.22fr_0.66fr_0.88fr_0.84fr] items-end justify-items-center gap-4 text-[rgb(48,55,43)] opacity-[0.07] transition-opacity duration-1200 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/branding:opacity-[0.08] group-hover/branding:opacity-[0.08] motion-reduce:transition-none min-[701px]:gap-[4%] [&_path]:fill-current [&>svg]:h-32 [&>svg]:min-w-0 [&>svg]:transition-[translate] [&>svg]:duration-1200 [&>svg]:ease-in-out motion-reduce:[&>svg]:transition-none min-[701px]:[&>svg]:h-36 min-[1001px]:[&>svg]:h-40"
       role="img"
       aria-label="Five selected brand identity logos, reproduced as flat monochrome symbols"
     >
       <svg
-        className="order-5 motion-safe:group-hover/branding:-translate-x-0.5 motion-safe:group-focus-within/branding:-translate-x-0.5"
+        className="order-5 w-[85%] motion-safe:group-hover/branding:-translate-x-0.5 motion-safe:group-focus-within/branding:-translate-x-0.5"
         preserveAspectRatio="xMidYMax meet"
         viewBox="0 0 36 43"
         aria-hidden="true"
@@ -66,7 +66,7 @@ function IdentityMarks() {
         />
       </svg>
       <svg
-        className="order-1 motion-safe:group-hover/branding:translate-x-0.5 motion-safe:group-focus-within/branding:translate-x-0.5"
+        className="order-1 w-[82%] translate-y-0.5 motion-safe:group-hover/branding:translate-x-0.5 motion-safe:group-focus-within/branding:translate-x-0.5"
         preserveAspectRatio="xMidYMax meet"
         viewBox="59 77 306 303"
         aria-hidden="true"
@@ -77,7 +77,7 @@ function IdentityMarks() {
         />
       </svg>
       <svg
-        className="order-4 motion-safe:group-hover/branding:-translate-x-0.25 motion-safe:group-focus-within/branding:-translate-x-0.25"
+        className="relative left-px order-4 w-[88%] motion-safe:group-hover/branding:-translate-x-0.25 motion-safe:group-focus-within/branding:-translate-x-0.25"
         preserveAspectRatio="xMidYMax meet"
         viewBox="0 0 37 42"
         aria-hidden="true"
@@ -88,7 +88,7 @@ function IdentityMarks() {
         />
       </svg>
       <svg
-        className="order-2 motion-safe:group-hover/branding:translate-x-0.25 motion-safe:group-focus-within/branding:translate-x-0.25"
+        className="order-2 w-[83%] -translate-y-0.5 motion-safe:group-hover/branding:translate-x-0.25 motion-safe:group-focus-within/branding:translate-x-0.25 min-[701px]:-translate-y-1"
         preserveAspectRatio="xMidYMax meet"
         viewBox="35 25 146 120"
         aria-hidden="true"
@@ -99,7 +99,7 @@ function IdentityMarks() {
         />
       </svg>
       <svg
-        className="order-3"
+        className="order-3 w-[85%] -translate-y-1 min-[701px]:-translate-y-1.5"
         preserveAspectRatio="xMidYMax meet"
         viewBox="90 45 245 370"
         aria-hidden="true"
@@ -115,7 +115,7 @@ function IdentityMarks() {
 
 export function BrandingArtwork() {
   return (
-    <div className="pointer-events-none absolute right-6 -bottom-3 left-6 min-[701px]:-bottom-5 min-[1001px]:right-7 min-[1001px]:-bottom-7 min-[1001px]:left-7">
+    <div className="pointer-events-none absolute right-6 -bottom-1 left-6 min-[701px]:-bottom-2 min-[1001px]:right-7 min-[1001px]:-bottom-3 min-[1001px]:left-7">
       <IdentityMarks />
     </div>
   );
