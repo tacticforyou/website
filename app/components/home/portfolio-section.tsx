@@ -16,12 +16,11 @@ const projects = [
     background: "/studio/portfolio/radian-background-v3.webp",
     object: "/studio/portfolio/radian-object-lossless.webp",
     objectSizes:
-      "(min-width: 1792px) 664px, (min-width: 960px) calc(39.5vw - 44px), (min-width: 600px) calc(78vw - 62px), calc(78vw - 37px)",
+      "(min-width: 1464px) 690px, (min-width: 960px) 53vw, (min-width: 600px) 64vw, 90vw",
     objectLayout: {
-      "--object-left": "50.5%",
-      "--object-width": "39.5%",
-      "--object-top": "-8.45cqw",
-      "--object-height": "36.8cqw",
+      "--object-center": "55.44%",
+      "--object-ratio": "1366 / 1151",
+      "--object-floor-offset": "1.9114%",
     },
     thumbnail: "/studio/portfolio/radian-card-v2.webp",
     accent: "#b8ef20",
@@ -35,12 +34,11 @@ const projects = [
     background: "/studio/portfolio/prevaisor-background-v3.webp",
     object: "/studio/portfolio/prevaisor-object-lossless.webp",
     objectSizes:
-      "(min-width: 1792px) 432px, (min-width: 960px) calc(25.7vw - 29px), (min-width: 600px) calc(50vw - 40px), calc(50vw - 24px)",
+      "(min-width: 1464px) 390px, (min-width: 960px) 30vw, (min-width: 600px) 36vw, 52vw",
     objectLayout: {
-      "--object-left": "58.7%",
-      "--object-width": "25.7%",
-      "--object-top": "-7.8cqw",
-      "--object-height": "35.3cqw",
+      "--object-center": "57.25%",
+      "--object-ratio": "1024 / 1536",
+      "--object-floor-offset": "0%",
     },
     thumbnail: "/studio/portfolio/prevaisor-card-v2.webp",
     accent: "#639aff",
@@ -54,12 +52,11 @@ const projects = [
     background: "/studio/portfolio/social-puppy-background-v3.webp",
     object: "/studio/portfolio/social-puppy-object-lossless.webp",
     objectSizes:
-      "(min-width: 1792px) 723px, (min-width: 960px) calc(43vw - 48px), (min-width: 600px) calc(98vw - 78px), calc(98vw - 47px)",
+      "(min-width: 1464px) 750px, (min-width: 960px) 58vw, (min-width: 600px) 70vw, 98vw",
     objectLayout: {
-      "--object-left": "45.7%",
-      "--object-width": "43%",
-      "--object-top": "-7.55cqw",
-      "--object-height": "35cqw",
+      "--object-center": "51.21%",
+      "--object-ratio": "1431 / 1099",
+      "--object-floor-offset": "0%",
     },
     thumbnail: "/studio/portfolio/social-puppy-card-v2.webp",
     accent: "#e9aaa9",
@@ -73,12 +70,11 @@ const projects = [
     background: "/studio/portfolio/doshi-background-v3.webp",
     object: "/studio/portfolio/doshi-object-lossless.webp",
     objectSizes:
-      "(min-width: 1792px) 713px, (min-width: 960px) calc(42.4vw - 47px), (min-width: 600px) calc(82vw - 66px), calc(82vw - 39px)",
+      "(min-width: 1464px) 650px, (min-width: 960px) 50vw, (min-width: 600px) 61vw, 86vw",
     objectLayout: {
-      "--object-left": "45.8%",
-      "--object-width": "42.4%",
-      "--object-top": "-10.45cqw",
-      "--object-height": "38.85cqw",
+      "--object-center": "50.93%",
+      "--object-ratio": "1328 / 1184",
+      "--object-floor-offset": "2.3649%",
     },
     thumbnail: "/studio/portfolio/doshi-card-v2.webp",
     accent: "#c7b6a0",
@@ -235,10 +231,10 @@ export function PortfolioSection() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className="work-section py-14 min-[600px]:py-16 min-[960px]:pt-18 min-[960px]:pb-12"
+      className="work-section pb-14 min-[600px]:pb-16 min-[960px]:pb-12"
       style={{ "--project-accent": activeProject.accent } as CSSProperties}
     >
-      <div className="work-frame studio-container min-[960px]:w-[calc(100%-112px)] min-[960px]:max-w-420">
+      <div className="work-frame mx-auto w-[calc(100%-48px)] max-w-330 min-[600px]:w-[calc(100%-80px)] min-[960px]:w-[calc(100%-144px)]">
         <div className="border-t border-line pt-5">
           <SectionLabel label="02 / Selected work">
             <span className="hidden min-[600px]:inline">
@@ -272,16 +268,16 @@ export function PortfolioSection() {
                 <p className="work-project-category font-mono text-[10px] tracking-wider text-green uppercase">
                   {projectNumber(selection.active)} / {activeProject.category}
                 </p>
-                <h3 className="text-[clamp(28px,8.6vw,36px)] leading-[1.05] font-semibold tracking-[-0.055em] min-[960px]:mt-3 min-[960px]:text-[clamp(32px,3.4vw,50px)]">
+                <h3 className="col-start-1 row-start-2 text-[clamp(28px,4vw,48px)] leading-[1.08] font-normal tracking-[-0.045em]">
                   {activeProject.name}
                 </h3>
                 <Link
-                  className="work-case-link inline-flex min-h-12 items-center justify-center gap-2 text-[13px] min-[960px]:mt-5 min-[960px]:border-b min-[960px]:border-foreground/40 min-[960px]:pb-1"
+                  className="work-case-link inline-flex min-h-12 items-center justify-center gap-3 text-[12px] whitespace-nowrap"
                   href={activeProject.href}
                   aria-label={`Explore ${activeProject.name}`}
                 >
                   <span className="work-case-label">Explore this world</span>
-                  <ArrowUpRight className="h-5 w-5 min-[960px]:h-3.5 min-[960px]:w-3.5" />
+                  <ArrowUpRight className="size-4" />
                 </Link>
               </div>
             </div>
@@ -372,7 +368,7 @@ export function PortfolioSection() {
                                     quality={90}
                                     sizes={
                                       layer === "background"
-                                        ? "(min-width: 1792px) 1210px, (min-width: 960px) calc(72vw - 81px), (min-width: 600px) calc(123vw - 98px), calc(145vw - 69px)"
+                                        ? "(min-width: 1464px) 1320px, (min-width: 960px) calc(100vw - 144px), (min-width: 600px) calc(100vw - 80px), calc(100vw - 48px)"
                                         : project.objectSizes
                                     }
                                     className={
@@ -431,7 +427,7 @@ export function PortfolioSection() {
                           alt=""
                           fill
                           quality={90}
-                          sizes="(min-width: 1792px) 308px, (min-width: 960px) calc(18.6vw - 26px), (min-width: 600px) calc(33.333vw - 58px), 96px"
+                          sizes="(min-width: 1464px) 410px, (min-width: 960px) calc(33.333vw - 81px), (min-width: 600px) calc(33.333vw - 58px), 96px"
                           className="object-cover transition-transform duration-700 group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                         />
                         <span className="work-thumbnail-arrow">
@@ -462,7 +458,7 @@ export function PortfolioSection() {
                   selectProject(requestedRef.current + 1, "forward")
                 }
               >
-                <ChevronRight className="h-7 w-7 min-[960px]:h-8 min-[960px]:w-8" />
+                <ChevronRight className="size-5" />
               </button>
             </div>
           </div>

@@ -19,11 +19,10 @@
   }
 
   .work-artwork {
-    --panel-top: 14%;
-    --panel-height: 86%;
+    --work-pop: clamp(24px, 3.6cqw, 48px);
     position: relative;
     z-index: 1;
-    margin: 24px 0 0;
+    margin: calc(24px + var(--work-pop)) 0 0;
     height: auto;
     aspect-ratio: 3 / 2;
     overflow: visible;
@@ -74,15 +73,14 @@
   .work-object-occlusion {
     z-index: 2;
     perspective: 1000px;
-    clip-path: polygon(-100% -200%, 200% -200%, 200% 100%, -100% 100%);
+    clip-path: inset(calc(-1 * var(--work-pop)) 0 0 round 0 0 25px 25px);
   }
 
   .work-background-layer {
-    inset: auto;
-    top: var(--panel-top);
+    inset: 0;
     left: 0;
     width: 100%;
-    height: var(--panel-height);
+    height: 100%;
     z-index: 1;
   }
 
@@ -94,51 +92,34 @@
 
   .work-background-mask {
     overflow: clip;
-    border-radius: 8px;
+    border-radius: 25px;
   }
 
   .work-background-image {
     object-fit: cover;
-    object-position: left center;
+    object-position: center;
     transition: transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .work-object-image {
-    object-fit: fill;
+    object-fit: contain;
     object-position: center;
   }
 
   .work-object-layer {
     inset: auto;
-    top: -2%;
-    left: 39%;
+    bottom: 0;
+    left: var(--object-center);
     z-index: 2;
-    width: 78%;
-    height: 112%;
+    width: auto;
+    height: calc(100% + var(--work-pop));
+    aspect-ratio: var(--object-ratio);
+    /* Move past transparent source padding so the visible object meets
+       the panel floor. Its natural proportions stay unchanged. */
+    translate: -50% var(--object-floor-offset);
     overflow: clip;
     transform-origin: bottom center;
     backface-visibility: hidden;
-  }
-
-  [data-project="Prevaisor"] .work-object-layer {
-    top: 0;
-    left: 54%;
-    width: 50%;
-    height: 110%;
-  }
-
-  [data-project="Social Puppy"] .work-object-layer {
-    top: 0;
-    left: 22%;
-    width: 98%;
-    height: 110%;
-  }
-
-  [data-project="Doshi"] .work-object-layer {
-    top: -1%;
-    left: 34%;
-    width: 82%;
-    height: 108%;
   }
 
   .work-artwork[data-animate="true"]
@@ -207,12 +188,12 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) 48px;
     align-items: center;
-    gap: 8px 16px;
+    gap: 10px 24px;
     animation: work-copy-in 580ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .work-project-category {
-    grid-column: 1 / -1;
+    grid-column: 1;
   }
 
   .work-case-link {
@@ -338,13 +319,17 @@
     height: 44px;
     place-items: center;
     border-radius: 50%;
-    background: var(--coral);
-    color: var(--bg);
-    transition: background 250ms;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    transition:
+      background 250ms,
+      border-color 250ms;
   }
 
   .work-next-button:hover {
-    background: var(--text);
+    background: rgb(255 255 255 / 5%);
+    border-color: rgb(224 226 216 / 40%);
   }
 
   .work-progress-button {
@@ -422,105 +407,35 @@
   }
 
   @media (width >= 960px) {
-    .work-frame {
-      width: calc(100% - 112px);
-      max-width: 1680px;
-    }
-
-    /* Preserve the original artwork scale and panel floor, centering the
-       composition as a whole after removing the left statement. */
+    /* One shared frame for the header, artwork and previews. Reserve only
+       the foreground's small pop-out instead of the former arrow artboard. */
     .work-stage {
-      height: 37.76cqw;
-      min-height: 360px;
-      margin-top: 3.5cqw;
-    }
-
-    .work-project-header {
-      position: absolute;
-      top: 0;
-      left: 14%;
-      width: 28%;
+      margin-top: 36px;
     }
 
     .work-artwork {
-      --panel-top: 0.13cqw;
-      --panel-height: 33.1cqw;
-      --panel-floor: calc(var(--panel-top) + var(--panel-height) * 0.821);
-      position: absolute;
-      inset: auto;
-      top: 10.45cqw;
-      left: 0;
-      width: 100%;
-      height: 27.31cqw;
-      margin: 0;
-      aspect-ratio: auto;
-      overflow: visible;
-      border-radius: 0;
-      background: transparent;
-    }
-
-    .work-object-occlusion {
-      clip-path: polygon(
-        -100% -200%,
-        200% -200%,
-        200% var(--panel-floor),
-        -100% var(--panel-floor)
-      );
-    }
-
-    .work-background-mask {
-      clip-path: polygon(0 25.2%, 100% 25.2%, 100% 82.1%, 0 82.1%);
-      border-radius: 0;
-    }
-
-    .work-background-image {
-      object-position: center;
-    }
-
-    .work-artwork-fallback {
-      inset: 0;
-    }
-
-    .work-background-layer {
-      inset: auto;
-      left: 14%;
-      top: var(--panel-top);
-      width: 72%;
-      height: var(--panel-height);
-    }
-
-    .work-artwork-layer[data-project] .work-object-layer {
-      top: var(--object-top);
-      left: calc(var(--object-left) - 16.33%);
-      width: var(--object-width);
-      height: var(--object-height);
+      aspect-ratio: 5 / 2;
     }
 
     .work-project-rail {
-      width: 72%;
-      margin-inline: auto;
       grid-template-columns: minmax(0, 1fr);
       align-items: start;
       gap: 0;
       margin-top: 24px;
     }
 
-    .work-project-copy h3 {
-      font-size: clamp(32px, 3.1cqw, 50px);
-      font-weight: 600;
-      letter-spacing: -0.045em;
-    }
-
     .work-project-copy {
-      display: block;
+      grid-template-columns: minmax(0, 1fr) auto;
     }
 
     .work-case-link {
       width: auto;
       height: auto;
-      border-width: 0;
-      border-radius: 0;
-      background: transparent;
+      align-self: end;
+      padding-inline: 20px;
+      border-color: rgb(224 226 216 / 20%);
+      border-radius: 999px;
+      background: rgb(255 255 255 / 3%);
     }
 
     .work-case-label {
@@ -528,28 +443,30 @@
     }
 
     .work-next-moves {
-      grid-template-columns: 6.3cqw minmax(0, 1fr) 4.95cqw;
-      gap: 0.6cqw;
+      grid-template-columns: minmax(0, 1fr) 44px;
+      gap: 12px 24px;
       padding-top: 0;
       align-items: start;
     }
 
     .work-next-label {
-      grid-column: auto;
-      padding-top: 1.1cqw;
-      font-size: 0.66cqw;
+      grid-column: 1;
+      grid-row: 1;
+      padding: 0;
+      font-size: 9px;
     }
 
     .work-thumbnail-list {
-      grid-column: auto;
-      grid-row: auto;
+      grid-column: 1;
+      grid-row: 2;
+      gap: 16px;
     }
 
     .work-thumbnail-button {
       display: block;
       padding: 0;
       border: 0;
-      border-radius: 5px;
+      border-radius: 12px;
     }
 
     .work-thumbnail-number,
@@ -563,16 +480,14 @@
     }
 
     .work-next-button {
-      grid-column: auto;
-      grid-row: auto;
-      align-self: start;
-      width: 4.95cqw;
-      height: 4.95cqw;
-      margin-top: 0.6cqw;
+      grid-column: 2;
+      grid-row: 2;
+      align-self: center;
     }
 
     .work-thumbnail {
-      aspect-ratio: 2.8;
+      aspect-ratio: 3.4;
+      border-radius: 12px;
       border: 0;
     }
   }
@@ -632,7 +547,7 @@
   0% {
     opacity: 0;
     clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-    transform: translate(9%, 3%) scale(0.94) rotate(1.5deg);
+    transform: translateX(3%);
   }
   18% {
     opacity: 1;
@@ -648,7 +563,7 @@
   0% {
     opacity: 0;
     clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
-    transform: translate(-9%, -3%) scale(0.94) rotate(-1.5deg);
+    transform: translateX(-3%);
   }
   18% {
     opacity: 1;
@@ -667,7 +582,7 @@
   }
   100% {
     opacity: 0;
-    transform: translate(-8%, -2%) scale(0.96);
+    transform: translateX(-3%);
   }
 }
 
@@ -678,14 +593,14 @@
   }
   100% {
     opacity: 0;
-    transform: translate(8%, 2%) scale(0.96);
+    transform: translateX(3%);
   }
 }
 
 @keyframes work-object-tilt-up {
   0% {
     opacity: 0;
-    transform: rotateX(16deg) translateY(36px) scale(0.94);
+    transform: rotateX(6deg) translateY(12px) scale(0.99);
   }
   24% {
     opacity: 1;
@@ -703,7 +618,7 @@
   }
   to {
     opacity: 0;
-    transform: rotateX(8deg) translateY(20px) scale(0.97);
+    transform: rotateX(3deg) translateY(8px) scale(0.99);
   }
 }
 

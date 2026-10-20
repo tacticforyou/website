@@ -177,10 +177,9 @@ test("every animated project keeps its centered rectangular panel during and aft
     await expectActiveProject(work, index);
     await expectActiveArtworkLoaded(work);
     const mask = work.locator('[data-state="active"] .work-background-mask');
-    const rectangle = "polygon(0px 25.2%, 100% 25.2%, 100% 82.1%, 0px 82.1%)";
-    await expect(mask).toHaveCSS("clip-path", rectangle);
-    // The foreground's stationary mask shares the rectangle's lower edge,
-    // including while the child object is rotating in perspective.
+    await expect(mask).toHaveCSS("clip-path", "none");
+    await expect(mask).toHaveCSS("border-radius", "25px");
+    // The foreground animates inside a stationary panel boundary.
     const occlusion = work.locator(
       '[data-state="active"] .work-object-occlusion',
     );
@@ -198,7 +197,7 @@ test("every animated project keeps its centered rectangular panel during and aft
       )
       .toBe(true);
     await expect(work.locator('[data-state="outgoing"]')).toHaveCount(0);
-    await expect(mask).toHaveCSS("clip-path", rectangle);
+    await expect(mask).toHaveCSS("clip-path", "none");
     const composition = await work
       .locator('[data-state="active"]')
       .evaluate((element) => {
@@ -209,36 +208,35 @@ test("every animated project keeps its centered rectangular panel during and aft
         const object = element
           .querySelector(".work-object-layer")!
           .getBoundingClientRect();
+        const image = element.querySelector(
+          ".work-object-image",
+        ) as HTMLImageElement;
         return {
           centerDifference: Math.abs(
             background.left +
               background.width / 2 -
               (frame.left + frame.width / 2),
           ),
+          frameWidth: frame.width,
           widthRatio: background.width / frame.width,
-          popsAbove: object.top < background.top + background.height * 0.252,
+          panelRatio: background.width / background.height,
+          popDistance: background.top - object.top,
+          floorDifference: Math.abs(object.bottom - background.bottom),
+          objectRatio: object.width / object.height,
+          naturalRatio: image.naturalWidth / image.naturalHeight,
         };
       });
     expect(composition.centerDifference).toBeLessThan(1);
-    expect(composition.widthRatio).toBeCloseTo(0.72, 2);
-    expect(composition.popsAbove).toBe(true);
-    const floorDifference = await work
-      .locator('[data-state="active"]')
-      .evaluate((element) => {
-        const background = element
-          .querySelector(".work-background-layer")!
-          .getBoundingClientRect();
-        const occlusion = element.querySelector(".work-object-occlusion")!;
-        const points =
-          getComputedStyle(occlusion).clipPath.matchAll(/(-?[\d.]+)px/g);
-        const floor = [...points].map((match) => Number(match[1]))[0];
-        return Math.abs(
-          occlusion.getBoundingClientRect().top +
-            floor -
-            (background.top + background.height * 0.821),
-        );
-      });
-    expect(floorDifference).toBeLessThan(1);
+    expect(composition.frameWidth).toBeCloseTo(1320, 0);
+    expect(composition.widthRatio).toBeCloseTo(1, 2);
+    expect(composition.panelRatio).toBeCloseTo(37 / 17, 2);
+    expect(composition.popDistance).toBeGreaterThanOrEqual(23);
+    expect(composition.popDistance).toBeLessThanOrEqual(49);
+    expect(composition.floorDifference).toBeLessThan(1);
+    expect(composition.objectRatio).toBeCloseTo(composition.naturalRatio, 2);
+    await expect(
+      work.locator('[data-state="active"] .work-object-image'),
+    ).toHaveCSS("object-fit", "contain");
     const screenshotDirectory = process.env.PORTFOLIO_SCREENSHOT_DIR;
     if (screenshotDirectory) {
       const name = `portfolio-animated-${project.name.toLowerCase().replaceAll(" ", "-")}`;
@@ -295,6 +293,22 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
   }, testInfo) => {
     await page.setViewportSize({ width, height: 1000 });
     const work = await openWork(page);
+    const alignedFrames = await work
+      .locator(".work-frame")
+      .evaluate((element) => {
+        const frame = element.getBoundingClientRect();
+        const services = document
+          .querySelector("#capabilities")!
+          .getBoundingClientRect();
+        return {
+          leftDifference: Math.abs(frame.left - services.left),
+          widthDifference: Math.abs(frame.width - services.width),
+          width: frame.width,
+        };
+      });
+    expect(alignedFrames.leftDifference).toBeLessThan(1);
+    expect(alignedFrames.widthDifference).toBeLessThan(1);
+    expect(alignedFrames.width).toBeLessThanOrEqual(1320);
     for (const [index, project] of projects.entries()) {
       await progressButton(work, project.name).click();
       await expectActiveProject(work, index);
@@ -328,7 +342,7 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
         }
       }
 
-      if (width < 960) {
+      {
         const artwork = await work.getByRole("img").boundingBox();
         const projectCopy = await work
           .locator(".work-project-copy")
@@ -346,17 +360,44 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
         expect(nextMoves).not.toBeNull();
         expect(
           artwork!.x,
-          "the mobile artwork stays inside the viewport",
+          "the artwork stays inside the viewport",
         ).toBeGreaterThanOrEqual(0);
         expect(artwork!.x + artwork!.width).toBeLessThanOrEqual(width);
         expect(
           artwork!.width / artwork!.height,
-          "the mobile artwork has room for its composition",
-        ).toBeCloseTo(width < 600 ? 1.5 : 16 / 9, 1);
+          "the artwork keeps its intended responsive aspect ratio",
+        ).toBeCloseTo(width < 600 ? 1.5 : width < 960 ? 16 / 9 : 37 / 17, 1);
+        expect(artwork!.width).toBeCloseTo(alignedFrames.width, 0);
         expect(
           artwork!.y - (projectCopy!.y + projectCopy!.height),
           "project details sit clearly above the artwork",
         ).toBeGreaterThanOrEqual(16);
+
+        for (const selector of [
+          ".work-project-category",
+          ".work-project-copy h3",
+          ".work-case-link",
+        ]) {
+          const detail = work.locator(selector);
+          const bounds = await detail.boundingBox();
+          expect(bounds).not.toBeNull();
+          expect(bounds!.x).toBeGreaterThanOrEqual(artwork!.x - 1);
+          expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(
+            artwork!.x + artwork!.width + 1,
+          );
+          expect(
+            await detail.evaluate(
+              (element) => element.scrollWidth <= element.clientWidth,
+            ),
+          ).toBe(true);
+        }
+        if (width >= 960) {
+          await expect(work.locator(".work-case-label")).toBeVisible();
+          const title = await work
+            .locator(".work-project-copy h3")
+            .boundingBox();
+          expect(title!.x + title!.width).toBeLessThanOrEqual(caseLink!.x);
+        }
         expect(
           nextMoves!.y - (artwork!.y + artwork!.height),
           "project previews have their own space below the artwork",
@@ -371,7 +412,7 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
               Number.parseFloat(getComputedStyle(element).fontSize),
             ),
             "project preview labels remain readable",
-          ).toBeGreaterThanOrEqual(10);
+          ).toBeGreaterThanOrEqual(width < 960 ? 10 : 9);
           expect(
             await label.evaluate(
               (element) => element.scrollWidth <= element.clientWidth,
