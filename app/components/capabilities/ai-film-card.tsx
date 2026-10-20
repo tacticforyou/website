@@ -22,7 +22,7 @@ export function AiFilmCard() {
       />
       <ServiceNumber
         className="top-3 right-6 z-1 min-[1001px]:right-7"
-        opacityClassName="opacity-[0.04]"
+        hoverOpacityClassName="group-hover/capability:opacity-[0.04] group-focus-within/capability:opacity-[0.04]"
         mobileNumber="4"
       >
         o2

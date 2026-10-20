@@ -15,7 +15,12 @@ export function BrandingCard() {
       aria-labelledby="branding-title"
     >
       <CapabilityBackdrop card="branding" />
-      <ServiceNumber opacityClassName="opacity-[0.045]">o1</ServiceNumber>
+      <ServiceNumber
+        className="-top-6 left-6 min-[1001px]:left-7"
+        hoverOpacityClassName="group-hover/capability:opacity-[0.045] group-focus-within/capability:opacity-[0.045]"
+      >
+        o1
+      </ServiceNumber>
       <div className="relative z-1">
         <ServiceHeading id="branding-title">
           Branding /{" "}

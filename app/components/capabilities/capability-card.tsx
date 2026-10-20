@@ -20,7 +20,7 @@ export function CapabilityCard({
   return (
     <article
       {...props}
-      className={`capability-card relative cursor-pointer overflow-hidden rounded-[25px] shadow-[0_12px_28px_rgb(0_0_0/0.28)] min-[701px]:min-h-0 ${surfaces[variant]} ${className}`}
+      className={`capability-card group/capability relative cursor-pointer overflow-hidden rounded-[25px] shadow-[0_12px_28px_rgb(0_0_0/0.28)] min-[701px]:min-h-0 ${surfaces[variant]} ${className}`}
     >
       {children}
       <span
@@ -84,17 +84,17 @@ export function ServiceNumber({
   children,
   mobileNumber,
   className = "top-3 right-6",
-  opacityClassName = "opacity-[0.07]",
+  hoverOpacityClassName = "group-hover/capability:opacity-[0.07] group-focus-within/capability:opacity-[0.07]",
 }: {
   children: string;
   mobileNumber?: string;
   className?: string;
-  opacityClassName?: string;
+  hoverOpacityClassName?: string;
 }) {
   return (
     <span
       aria-hidden="true"
-      className={`capability-number pointer-events-none absolute inline-flex items-start font-editorial text-[144px] leading-none font-normal tracking-[-0.055em] lining-nums select-none min-[701px]:text-[164px] min-[1001px]:text-[192px] ${opacityClassName} ${className}`}
+      className={`capability-number pointer-events-none absolute inline-flex items-start font-editorial text-[144px] leading-none font-normal tracking-[-0.055em] lining-nums opacity-[0.0028] transition-opacity duration-1200 ease-in-out select-none motion-reduce:transition-none min-[701px]:text-[164px] min-[1001px]:text-[192px] ${hoverOpacityClassName} ${className}`}
     >
       <span className="capability-number-prefix relative -top-[0.23em]">
         {children[0]}
