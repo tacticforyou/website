@@ -2,7 +2,7 @@ function IdentityMarks() {
   // Column proportions follow the visible logo order to balance their heights.
   return (
     <div
-      className="grid w-full grid-cols-[1.01fr_1.22fr_0.66fr_0.88fr_0.84fr] items-end justify-items-center gap-4 text-[rgb(48,55,43)] opacity-[0.07] transition-opacity duration-1200 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/branding:opacity-[0.08] group-hover/branding:opacity-[0.08] motion-reduce:transition-none min-[701px]:gap-[4%] [&>svg]:h-32 [&>svg]:w-full [&>svg]:transition-[translate] [&>svg]:duration-1200 [&>svg]:ease-in-out motion-reduce:[&>svg]:transition-none min-[701px]:[&>svg]:h-36 min-[1001px]:[&>svg]:h-40"
+      className="grid w-full grid-cols-[1.01fr_1.22fr_0.66fr_0.88fr_0.84fr] items-end justify-items-center gap-4 text-[rgb(48,55,43)] opacity-[0.07] transition-opacity duration-1200 ease-[cubic-bezier(0.22,1,0.36,1)] group-focus-within/branding:opacity-[0.08] group-hover/branding:opacity-[0.08] motion-reduce:transition-none min-[701px]:gap-[4%] [&>svg]:h-32 [&>svg]:w-[90%] [&>svg]:min-w-0 [&>svg]:transition-[translate] [&>svg]:duration-1200 [&>svg]:ease-in-out motion-reduce:[&>svg]:transition-none min-[701px]:[&>svg]:h-36 min-[1001px]:[&>svg]:h-40"
       role="img"
       aria-label="Five selected brand identity logos, reproduced as flat monochrome symbols"
     >

@@ -16,7 +16,7 @@ export function BrandingCard() {
     >
       <CapabilityBackdrop card="branding" />
       <ServiceNumber
-        className="-top-6 left-6 min-[1001px]:left-7"
+        className="-top-3 right-[8%]"
         hoverOpacityClassName="group-hover/capability:opacity-[0.045] group-focus-within/capability:opacity-[0.045]"
       >
         o1
