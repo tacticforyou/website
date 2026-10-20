@@ -15,14 +15,14 @@ export function ClientRibbon() {
   return (
     <section
       aria-label="Selected clients"
-      className="client-ribbon bg-background pt-3 focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-sage min-[701px]:pt-5"
+      className="client-ribbon mx-auto w-[calc(100%-48px)] max-w-330 bg-background pt-3 focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-sage min-[600px]:w-[calc(100%-80px)] min-[701px]:pt-5 min-[960px]:w-[calc(100%-144px)]"
       tabIndex={0}
       aria-describedby="client-ribbon-description"
     >
       <p id="client-ribbon-description" className="sr-only">
         Client logos scroll slowly. Hover or focus this ribbon to pause.
       </p>
-      <div className="client-ribbon-window studio-container overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] min-[960px]:w-[calc(100%-112px)] min-[960px]:max-w-420">
+      <div className="client-ribbon-window w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
         <div className="client-ribbon-track flex w-max">
           {[false, true].map((duplicate) => (
             <ul

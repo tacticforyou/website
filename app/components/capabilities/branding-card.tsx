@@ -11,7 +11,7 @@ export function BrandingCard() {
     <CapabilityCard
       href="/services/branding-design"
       variant="chalk"
-      className="group/branding flex min-h-68 flex-col items-start justify-between min-[701px]:col-span-8 min-[701px]:row-start-1"
+      className="group/branding min-h-68 min-[701px]:col-span-8 min-[701px]:row-start-1"
       aria-labelledby="branding-title"
     >
       <CapabilityBackdrop card="branding" />

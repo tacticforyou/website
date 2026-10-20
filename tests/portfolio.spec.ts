@@ -205,9 +205,15 @@ test("every animated project keeps its centered rectangular panel during and aft
         const background = element
           .querySelector(".work-background-layer")!
           .getBoundingClientRect();
-        const object = element
-          .querySelector(".work-object-layer")!
-          .getBoundingClientRect();
+        const objectLayer = element.querySelector(".work-object-layer")!;
+        const object = objectLayer.getBoundingClientRect();
+        const floorOffset =
+          Number.parseFloat(
+            getComputedStyle(objectLayer).getPropertyValue(
+              "--object-floor-offset",
+            ),
+          ) / 100;
+        const sourcePadding = object.height * floorOffset;
         const image = element.querySelector(
           ".work-object-image",
         ) as HTMLImageElement;
@@ -220,8 +226,10 @@ test("every animated project keeps its centered rectangular panel during and aft
           frameWidth: frame.width,
           widthRatio: background.width / frame.width,
           panelRatio: background.width / background.height,
-          popDistance: background.top - object.top,
-          floorDifference: Math.abs(object.bottom - background.bottom),
+          popDistance: background.top - object.top + sourcePadding,
+          floorDifference: Math.abs(
+            object.bottom - sourcePadding - background.bottom,
+          ),
           objectRatio: object.width / object.height,
           naturalRatio: image.naturalWidth / image.naturalHeight,
         };
@@ -229,7 +237,7 @@ test("every animated project keeps its centered rectangular panel during and aft
     expect(composition.centerDifference).toBeLessThan(1);
     expect(composition.frameWidth).toBeCloseTo(1320, 0);
     expect(composition.widthRatio).toBeCloseTo(1, 2);
-    expect(composition.panelRatio).toBeCloseTo(37 / 17, 2);
+    expect(composition.panelRatio).toBeCloseTo(5 / 2, 2);
     expect(composition.popDistance).toBeGreaterThanOrEqual(23);
     expect(composition.popDistance).toBeLessThanOrEqual(49);
     expect(composition.floorDifference).toBeLessThan(1);
@@ -285,6 +293,33 @@ test("keyboard selection works and reduced motion removes the project animation"
     "animation-name",
     "none",
   );
+});
+
+test("desktop project previews sit close to the shorter panel with navigation beside them", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1864, height: 884 });
+  const work = await openWork(page);
+  await expectActiveArtworkLoaded(work);
+  const artwork = await work.getByRole("img").boundingBox();
+  const previews = await work.locator(".work-thumbnail-list").boundingBox();
+  const nextButton = await work.locator(".work-next-button").boundingBox();
+  expect(artwork).not.toBeNull();
+  expect(previews).not.toBeNull();
+  expect(nextButton).not.toBeNull();
+  expect(artwork!.width / artwork!.height).toBeCloseTo(5 / 2, 2);
+  expect(previews!.y - (artwork!.y + artwork!.height)).toBeGreaterThanOrEqual(
+    16,
+  );
+  expect(previews!.y - (artwork!.y + artwork!.height)).toBeLessThan(65);
+  expect(nextButton!.x).toBeGreaterThanOrEqual(previews!.x + previews!.width);
+  expect(
+    Math.abs(
+      nextButton!.y +
+        nextButton!.height / 2 -
+        (previews!.y + previews!.height / 2),
+    ),
+  ).toBeLessThan(1);
 });
 
 for (const width of [320, 390, 768, 959, 960, 1440]) {
@@ -366,7 +401,7 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
         expect(
           artwork!.width / artwork!.height,
           "the artwork keeps its intended responsive aspect ratio",
-        ).toBeCloseTo(width < 600 ? 1.5 : width < 960 ? 16 / 9 : 37 / 17, 1);
+        ).toBeCloseTo(width < 600 ? 1.5 : width < 960 ? 16 / 9 : 5 / 2, 1);
         expect(artwork!.width).toBeCloseTo(alignedFrames.width, 0);
         expect(
           artwork!.y - (projectCopy!.y + projectCopy!.height),
