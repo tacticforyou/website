@@ -1,6 +1,5 @@
 @layer components {
   .work-section {
-    --work-resting-saturation: 0.6;
     isolation: isolate;
     overflow: clip;
   }
@@ -9,56 +8,26 @@
     container-type: inline-size;
   }
 
-  .work-artwork,
-  .work-thumbnail {
-    filter: saturate(var(--work-resting-saturation));
-    transition: filter 1200ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .work-thumbnail-button:focus-visible .work-thumbnail {
-    filter: saturate(1);
-  }
-
   .work-stage {
     position: relative;
     margin-top: 28px;
   }
 
-  .work-statement {
+  .work-project-header {
     position: relative;
     z-index: 2;
-    pointer-events: none;
-  }
-
-  .work-heading {
-    font-family: var(--font-work-display), sans-serif;
-    font-size: clamp(36px, 16cqw, 80px);
-    font-weight: 400;
-    line-height: 0.98;
-    letter-spacing: 0;
-    text-transform: uppercase;
-  }
-
-  .work-heading span {
-    display: block;
-    width: fit-content;
-  }
-
-  .work-heading span:nth-child(n + 2) {
-    display: inline;
   }
 
   .work-artwork {
-    --arrow-top: 0%;
-    --arrow-height: 100%;
+    --panel-top: 14%;
+    --panel-height: 86%;
     position: relative;
     z-index: 1;
     margin: 24px 0 0;
     height: auto;
     aspect-ratio: 3 / 2;
-    overflow: clip;
-    border-radius: 10px;
-    background: var(--project-accent);
+    overflow: visible;
+    background: transparent;
     pointer-events: auto;
   }
 
@@ -100,19 +69,20 @@
     perspective: 1000px;
   }
 
-  /* The object tilts inside this stationary mask, so its foot stays inside
-     the shaft while its head can break above the arrow. */
+  /* Clip the foreground at the panel's foot while allowing it to rise above
+     the rectangle. The object animates inside this stationary boundary. */
   .work-object-occlusion {
     z-index: 2;
     perspective: 1000px;
+    clip-path: polygon(-100% -200%, 200% -200%, 200% 100%, -100% 100%);
   }
 
   .work-background-layer {
     inset: auto;
-    top: var(--arrow-top);
+    top: var(--panel-top);
     left: 0;
     width: 100%;
-    height: var(--arrow-height);
+    height: var(--panel-height);
     z-index: 1;
   }
 
@@ -124,6 +94,7 @@
 
   .work-background-mask {
     overflow: clip;
+    border-radius: 8px;
   }
 
   .work-background-image {
@@ -418,10 +389,6 @@
       margin-top: 32px;
     }
 
-    .work-heading {
-      font-size: 80px;
-    }
-
     .work-artwork {
       aspect-ratio: 16 / 9;
     }
@@ -460,40 +427,31 @@
       max-width: 1680px;
     }
 
-    /* Shared geometry from the approved desktop artboard. Each object's
-       rectangle is authored separately in the project data. */
+    /* Preserve the original artwork scale and panel floor, centering the
+       composition as a whole after removing the left statement. */
     .work-stage {
-      height: 32cqw;
+      height: 37.76cqw;
+      min-height: 360px;
       margin-top: 3.5cqw;
     }
 
-    .work-heading {
-      font-size: 9.96cqw;
-      line-height: 0.91;
-      transform: scaleY(0.87);
-      transform-origin: top left;
-    }
-
-    .work-heading span:nth-child(n) {
-      display: block;
-    }
-
-    .work-statement > p {
+    .work-project-header {
       position: absolute;
-      top: 26.2cqw;
-      left: 0;
-      margin: 0;
-      font-size: 1.1cqw;
+      top: 0;
+      left: 14%;
+      width: 28%;
     }
 
     .work-artwork {
-      --arrow-top: 0.13cqw;
-      --arrow-height: 33.1cqw;
-      --arrow-floor: calc(var(--arrow-top) + var(--arrow-height) * 0.821);
+      --panel-top: 0.13cqw;
+      --panel-height: 33.1cqw;
+      --panel-floor: calc(var(--panel-top) + var(--panel-height) * 0.821);
       position: absolute;
-      inset: 0;
+      inset: auto;
+      top: 10.45cqw;
+      left: 0;
       width: 100%;
-      height: 100%;
+      height: 27.31cqw;
       margin: 0;
       aspect-ratio: auto;
       overflow: visible;
@@ -505,21 +463,14 @@
       clip-path: polygon(
         -100% -200%,
         200% -200%,
-        200% var(--arrow-floor),
-        -100% var(--arrow-floor)
+        200% var(--panel-floor),
+        -100% var(--panel-floor)
       );
     }
 
     .work-background-mask {
-      clip-path: polygon(
-        0 25.2%,
-        76.4% 25.2%,
-        76.4% 0,
-        100% 50.8%,
-        76.4% 100%,
-        76.4% 82.1%,
-        0 82.1%
-      );
+      clip-path: polygon(0 25.2%, 100% 25.2%, 100% 82.1%, 0 82.1%);
+      border-radius: 0;
     }
 
     .work-background-image {
@@ -527,42 +478,35 @@
     }
 
     .work-artwork-fallback {
-      inset: 20% 3% 16%;
-      clip-path: polygon(
-        0 24%,
-        72% 24%,
-        72% 0,
-        100% 50%,
-        72% 100%,
-        72% 76%,
-        0 76%
-      );
+      inset: 0;
     }
 
     .work-background-layer {
       inset: auto;
-      left: 30.33%;
-      top: var(--arrow-top);
+      left: 14%;
+      top: var(--panel-top);
       width: 72%;
-      height: var(--arrow-height);
+      height: var(--panel-height);
     }
 
     .work-artwork-layer[data-project] .work-object-layer {
       top: var(--object-top);
-      left: var(--object-left);
+      left: calc(var(--object-left) - 16.33%);
       width: var(--object-width);
       height: var(--object-height);
     }
 
     .work-project-rail {
-      grid-template-columns: minmax(0, 31.75%) minmax(0, 1fr);
+      width: 72%;
+      margin-inline: auto;
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
       gap: 0;
-      margin-top: 0;
+      margin-top: 24px;
     }
 
     .work-project-copy h3 {
-      font-size: 3.85cqw;
+      font-size: clamp(32px, 3.1cqw, 50px);
       font-weight: 600;
       letter-spacing: -0.045em;
     }
@@ -586,7 +530,7 @@
     .work-next-moves {
       grid-template-columns: 6.3cqw minmax(0, 1fr) 4.95cqw;
       gap: 0.6cqw;
-      padding-top: 1.8cqw;
+      padding-top: 0;
       align-items: start;
     }
 
@@ -630,13 +574,6 @@
     .work-thumbnail {
       aspect-ratio: 2.8;
       border: 0;
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .work-stage:hover .work-artwork,
-    .work-thumbnail-button:hover .work-thumbnail {
-      filter: saturate(1);
     }
   }
 

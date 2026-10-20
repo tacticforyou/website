@@ -77,8 +77,9 @@ test("selected work sits after services and every project opens its own case stu
   const work = await openWork(page);
   await expect(work).toHaveAttribute("aria-labelledby", "work-title");
   await expect(work.getByRole("heading", { level: 2 })).toHaveText(
-    /Work that\s*Makes\s*Moves\./,
+    "Selected work",
   );
+  await expectActiveProject(work, 3);
   expect(
     await work.evaluate((section) => ({
       previous: section.previousElementSibling?.id,
@@ -165,7 +166,7 @@ test("rapid selections settle on the latest requested project", async ({
   await expectActiveProject(work, 3);
 });
 
-test("every animated project keeps its arrow silhouette during and after the wipe", async ({
+test("every animated project keeps its centered rectangular panel during and after the wipe", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 1864, height: 1000 });
@@ -176,10 +177,9 @@ test("every animated project keeps its arrow silhouette during and after the wip
     await expectActiveProject(work, index);
     await expectActiveArtworkLoaded(work);
     const mask = work.locator('[data-state="active"] .work-background-mask');
-    const arrow =
-      "polygon(0px 25.2%, 76.4% 25.2%, 76.4% 0px, 100% 50.8%, 76.4% 100%, 76.4% 82.1%, 0px 82.1%)";
-    await expect(mask).toHaveCSS("clip-path", arrow);
-    // The foreground's stationary mask shares the arrow shaft's lower edge,
+    const rectangle = "polygon(0px 25.2%, 100% 25.2%, 100% 82.1%, 0px 82.1%)";
+    await expect(mask).toHaveCSS("clip-path", rectangle);
+    // The foreground's stationary mask shares the rectangle's lower edge,
     // including while the child object is rotating in perspective.
     const occlusion = work.locator(
       '[data-state="active"] .work-object-occlusion',
@@ -198,7 +198,30 @@ test("every animated project keeps its arrow silhouette during and after the wip
       )
       .toBe(true);
     await expect(work.locator('[data-state="outgoing"]')).toHaveCount(0);
-    await expect(mask).toHaveCSS("clip-path", arrow);
+    await expect(mask).toHaveCSS("clip-path", rectangle);
+    const composition = await work
+      .locator('[data-state="active"]')
+      .evaluate((element) => {
+        const frame = element.closest(".work-frame")!.getBoundingClientRect();
+        const background = element
+          .querySelector(".work-background-layer")!
+          .getBoundingClientRect();
+        const object = element
+          .querySelector(".work-object-layer")!
+          .getBoundingClientRect();
+        return {
+          centerDifference: Math.abs(
+            background.left +
+              background.width / 2 -
+              (frame.left + frame.width / 2),
+          ),
+          widthRatio: background.width / frame.width,
+          popsAbove: object.top < background.top + background.height * 0.252,
+        };
+      });
+    expect(composition.centerDifference).toBeLessThan(1);
+    expect(composition.widthRatio).toBeCloseTo(0.72, 2);
+    expect(composition.popsAbove).toBe(true);
     const floorDifference = await work
       .locator('[data-state="active"]')
       .evaluate((element) => {
@@ -239,6 +262,8 @@ test("keyboard selection works and reduced motion removes the project animation"
   const work = await openWork(page);
   const first = progressButton(work, projects[0].name);
   await first.focus();
+  await page.keyboard.press("Home");
+  await expectActiveProject(work, 0);
   await page.keyboard.press("ArrowRight");
   await expectActiveProject(work, 1);
   await expect(first).toBeFocused();
@@ -305,7 +330,6 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
 
       if (width < 960) {
         const artwork = await work.getByRole("img").boundingBox();
-        const statement = await work.locator(".work-statement").boundingBox();
         const projectCopy = await work
           .locator(".work-project-copy")
           .boundingBox();
@@ -317,7 +341,6 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
           .boundingBox();
         const nextMoves = await work.locator(".work-next-moves").boundingBox();
         expect(artwork).not.toBeNull();
-        expect(statement).not.toBeNull();
         expect(projectCopy).not.toBeNull();
         expect(caseLink).not.toBeNull();
         expect(nextMoves).not.toBeNull();
@@ -331,16 +354,12 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
           "the mobile artwork has room for its composition",
         ).toBeCloseTo(width < 600 ? 1.5 : 16 / 9, 1);
         expect(
-          artwork!.y - (statement!.y + statement!.height),
-          "the heading and artwork have a clear gap",
+          artwork!.y - (projectCopy!.y + projectCopy!.height),
+          "project details sit clearly above the artwork",
         ).toBeGreaterThanOrEqual(16);
         expect(
-          projectCopy!.y - (artwork!.y + artwork!.height),
-          "project details sit clearly below the artwork",
-        ).toBeGreaterThanOrEqual(16);
-        expect(
-          nextMoves!.y - (caseLink!.y + caseLink!.height),
-          "project previews have their own space below the case link",
+          nextMoves!.y - (artwork!.y + artwork!.height),
+          "project previews have their own space below the artwork",
         ).toBeGreaterThanOrEqual(16);
 
         const thumbnails = work.locator(".work-thumbnail-button");
@@ -360,6 +379,10 @@ for (const width of [320, 390, 768, 959, 960, 1440]) {
             "project names are not clipped",
           ).toBe(true);
         }
+      }
+
+      for (const surface of [".work-artwork", ".work-thumbnail"]) {
+        await expect(work.locator(surface).first()).toHaveCSS("filter", "none");
       }
 
       const screenshotDirectory = process.env.PORTFOLIO_SCREENSHOT_DIR;

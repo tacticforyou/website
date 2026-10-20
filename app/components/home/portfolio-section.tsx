@@ -2,19 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import localFont from "next/font/local";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { SectionLabel } from "../studio-content";
 import { ArrowUpRight, ChevronRight } from "../ui/icons";
 import "./portfolio-section.css";
-
-const displayFont = localFont({
-  src: "../../../public/studio/portfolio/anton.ttf",
-  weight: "400",
-  display: "swap",
-  variable: "--font-work-display",
-});
 
 const projects = [
   {
@@ -96,6 +88,9 @@ const projects = [
 ] as const;
 
 const projectNumber = (index: number) => String(index + 1).padStart(2, "0");
+const initialProject = projects.findIndex(
+  (project) => project.name === "Doshi",
+);
 
 type Selection = {
   active: number;
@@ -110,17 +105,17 @@ const imageKey = (index: number, layer: ArtworkLayer) => `${index}:${layer}`;
 
 export function PortfolioSection() {
   const [selection, setSelection] = useState<Selection>({
-    active: 0,
+    active: initialProject,
     previous: null,
     direction: "forward",
     revision: 0,
   });
-  const [requested, setRequested] = useState(0);
+  const [requested, setRequested] = useState(initialProject);
   const [failedImages, setFailedImages] = useState<string[]>([]);
   const [hasEntered, setHasEntered] = useState(false);
   const [initialImagesReady, setInitialImagesReady] = useState(false);
   const artworkRef = useRef<HTMLDivElement>(null);
-  const requestedRef = useRef(0);
+  const requestedRef = useRef(initialProject);
   const directionRef = useRef<Selection["direction"]>("forward");
   const loadedImages = useRef(new Set<string>());
   const activeProject = projects[selection.active];
@@ -165,7 +160,7 @@ export function PortfolioSection() {
       )
     )
       return;
-    if (index === 0) setInitialImagesReady(true);
+    if (index === initialProject) setInitialImagesReady(true);
     if (requestedRef.current === index) activate(index);
   }
 
@@ -240,7 +235,7 @@ export function PortfolioSection() {
     <section
       id="work"
       aria-labelledby="work-title"
-      className={`${displayFont.variable} work-section py-14 min-[600px]:py-16 min-[960px]:pt-18 min-[960px]:pb-12`}
+      className="work-section py-14 min-[600px]:py-16 min-[960px]:pt-18 min-[960px]:pb-12"
       style={{ "--project-accent": activeProject.accent } as CSSProperties}
     >
       <div className="work-frame studio-container min-[960px]:w-[calc(100%-112px)] min-[960px]:max-w-420">
@@ -250,6 +245,9 @@ export function PortfolioSection() {
               TACTIC / Every move matters
             </span>
           </SectionLabel>
+          <h2 id="work-title" className="sr-only">
+            Selected work
+          </h2>
         </div>
 
         <div
@@ -266,15 +264,26 @@ export function PortfolioSection() {
           </p>
 
           <div className="work-stage">
-            <div className="work-statement">
-              <h2 id="work-title" className="work-heading">
-                <span>Work that</span>
-                <span>Makes</span>
-                <span> Moves.</span>
-              </h2>
-              <p className="mt-5 max-w-72 text-[13px] leading-relaxed text-muted min-[600px]:max-w-none min-[960px]:mt-6 min-[960px]:text-[15px]">
-                Different worlds. One clear direction.
-              </p>
+            <div
+              id="work-active-project"
+              className="work-project-header min-w-0"
+            >
+              <div key={selection.revision} className="work-project-copy">
+                <p className="work-project-category font-mono text-[10px] tracking-wider text-green uppercase">
+                  {projectNumber(selection.active)} / {activeProject.category}
+                </p>
+                <h3 className="text-[clamp(28px,8.6vw,36px)] leading-[1.05] font-semibold tracking-[-0.055em] min-[960px]:mt-3 min-[960px]:text-[clamp(32px,3.4vw,50px)]">
+                  {activeProject.name}
+                </h3>
+                <Link
+                  className="work-case-link inline-flex min-h-12 items-center justify-center gap-2 text-[13px] min-[960px]:mt-5 min-[960px]:border-b min-[960px]:border-foreground/40 min-[960px]:pb-1"
+                  href={activeProject.href}
+                  aria-label={`Explore ${activeProject.name}`}
+                >
+                  <span className="work-case-label">Explore this world</span>
+                  <ArrowUpRight className="h-5 w-5 min-[960px]:h-3.5 min-[960px]:w-3.5" />
+                </Link>
+              </div>
             </div>
 
             <div
@@ -398,25 +407,6 @@ export function PortfolioSection() {
           </div>
 
           <div className="work-project-rail">
-            <div id="work-active-project" className="min-w-0">
-              <div key={selection.revision} className="work-project-copy">
-                <p className="work-project-category font-mono text-[10px] tracking-wider text-green uppercase">
-                  {projectNumber(selection.active)} / {activeProject.category}
-                </p>
-                <h3 className="text-[clamp(28px,8.6vw,36px)] leading-[1.05] font-semibold tracking-[-0.055em] min-[960px]:mt-3 min-[960px]:text-[clamp(32px,3.4vw,50px)]">
-                  {activeProject.name}
-                </h3>
-                <Link
-                  className="work-case-link inline-flex min-h-12 items-center justify-center gap-2 text-[13px] min-[960px]:mt-5 min-[960px]:border-b min-[960px]:border-foreground/40 min-[960px]:pb-1"
-                  href={activeProject.href}
-                  aria-label={`Explore ${activeProject.name}`}
-                >
-                  <span className="work-case-label">Explore this world</span>
-                  <ArrowUpRight className="h-5 w-5 min-[960px]:h-3.5 min-[960px]:w-3.5" />
-                </Link>
-              </div>
-            </div>
-
             <div className="work-next-moves">
               <span className="work-next-label font-mono text-[10px] tracking-wider text-muted uppercase min-[960px]:text-[9px]">
                 Next moves
